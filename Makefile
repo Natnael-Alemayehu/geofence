@@ -19,5 +19,8 @@ deps-upgrade:
 	go mod tidy
 	go mod vendor
 
+deps-cleancache:
+	go clean -modcache
+
 list:
 	go list -mod=mod all
