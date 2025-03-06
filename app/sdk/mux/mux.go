@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/Natnael-Alemayehu/geofence/app/domain/geofenceapp"
+	"github.com/Natnael-Alemayehu/geofence/app/domain/statusapp"
 	"github.com/Natnael-Alemayehu/geofence/app/sdk/mid"
 	"github.com/Natnael-Alemayehu/geofence/foundation/logger"
 	"github.com/Natnael-Alemayehu/geofence/foundation/web"
@@ -32,6 +33,7 @@ func WebAPI(cfg Config) http.Handler {
 	)
 
 	geofenceapp.Routes(app, cfg.Log)
+	statusapp.Routes(app, cfg.Log)
 
 	return app
 }

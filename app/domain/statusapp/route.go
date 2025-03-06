@@ -1,4 +1,4 @@
-package geofenceapp
+package statusapp
 
 import (
 	"net/http"
@@ -13,5 +13,5 @@ func Routes(app *web.App, log *logger.Logger) {
 
 	api := newApp()
 
-	app.HandlerFunc(http.MethodGet, version, "/verify_location", api.VerifyLocation)
+	app.HandlerFunc(http.MethodGet, version, "/status", api.status)
 }
