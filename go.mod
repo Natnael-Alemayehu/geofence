@@ -3,6 +3,7 @@ module github.com/Natnael-Alemayehu/geofence
 go 1.23.5
 
 require (
+	github.com/ardanlabs/conf/v3 v3.4.0
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.25.0

@@ -9,18 +9,18 @@ import (
 
 const (
 	writerKey = iota + 1
-	TraceID
+	TraceIDKey
 )
 
 func setTraceID(ctx context.Context, traceIDkey uuid.UUID) context.Context {
-	return context.WithValue(ctx, TraceID, traceIDkey)
+	return context.WithValue(ctx, TraceIDKey, traceIDkey)
 }
 
 // GetTraceID returns the traceID for the request.
-func GetTraceID(ctx context.Context) http.ResponseWriter {
-	v, ok := ctx.Value(TraceID).(http.ResponseWriter)
+func GetTraceID(ctx context.Context) uuid.UUID {
+	v, ok := ctx.Value(TraceIDKey).(uuid.UUID)
 	if !ok {
-		return nil
+		return uuid.Nil
 	}
 
 	return v

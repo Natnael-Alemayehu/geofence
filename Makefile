@@ -7,6 +7,9 @@ SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 run-geofence:
 	go run api/service/geofence/main.go | go run api/tooling/logfmt/main.go
 
+run-status:
+	curl http -i -X GET localhost:3000/v1/status
+
 # ==============================================================================
 # Modules support
 

@@ -1,3 +1,6 @@
+# github.com/ardanlabs/conf/v3 v3.4.0
+## explicit; go 1.18
+github.com/ardanlabs/conf/v3
 # github.com/gabriel-vasile/mimetype v1.4.8
 ## explicit; go 1.20
 github.com/gabriel-vasile/mimetype
