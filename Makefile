@@ -10,10 +10,16 @@ run-geofence:
 run-status:
 	curl http -i -X GET localhost:3000/v1/status
 
-run-verify:
+run-verify-inside:
 	curl -i -X POST \
 	-H 'Content-Type: application/json' \
 	-d '{"latitude":9.02921925586169,"longitude":38.741409590890214}' \
+	localhost:3000/v1/verify_location
+
+run-verify-outside:
+	curl -i -X POST \
+	-H 'Content-Type: application/json' \
+	-d '{"latitude":9.02921925586169,"longitude":40.741409590890214}' \
 	localhost:3000/v1/verify_location
 
 # ==============================================================================

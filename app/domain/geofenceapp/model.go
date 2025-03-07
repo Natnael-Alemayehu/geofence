@@ -25,7 +25,7 @@ type Verification struct {
 	Latitude   float64  `json:"latitude" `
 	Longitude  float64  `json:"longitude"`
 	Status     string   `json:"status"`
-	LocationID []string `json:"location_id"`
+	LocationID []string `json:"location_id,omitempty"`
 }
 
 // Encode implements the encoder interface.
