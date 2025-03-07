@@ -13,5 +13,5 @@ func Routes(app *web.App, log *logger.Logger) {
 
 	api := newApp()
 
-	app.HandlerFunc(http.MethodGet, version, "/verify_location", api.VerifyLocation)
+	app.HandlerFunc(http.MethodPost, version, "/verify_location", api.VerifyLocation)
 }
