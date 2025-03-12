@@ -11,12 +11,14 @@ import (
 	"github.com/Natnael-Alemayehu/geofence/app/sdk/mid"
 	"github.com/Natnael-Alemayehu/geofence/foundation/logger"
 	"github.com/Natnael-Alemayehu/geofence/foundation/web"
+	"github.com/jmoiron/sqlx"
 )
 
 // Config contains all the mandatory systems required by handlers.
 type Config struct {
 	Build string
 	Log   *logger.Logger
+	DB    *sqlx.DB
 }
 
 // WebAPI constructs a http.Handler with all application routes bound.

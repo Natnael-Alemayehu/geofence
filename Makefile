@@ -39,3 +39,11 @@ deps-cleancache:
 
 list:
 	go list -mod=mod all
+
+
+# ==============================================================================
+docker-build: 
+	docker build -t geofence .
+
+docker-compose-up:
+	docker compose -f zarf/compose/docker_compose.yaml up -d	

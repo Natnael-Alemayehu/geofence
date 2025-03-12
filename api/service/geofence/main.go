@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/Natnael-Alemayehu/geofence/app/sdk/mux"
+	"github.com/Natnael-Alemayehu/geofence/business/sdk/sqldb"
 	"github.com/Natnael-Alemayehu/geofence/foundation/logger"
 	"github.com/Natnael-Alemayehu/geofence/foundation/web"
 	"github.com/ardanlabs/conf/v3"
@@ -27,7 +28,7 @@ func main() {
 		return web.GetTraceID(ctx).String()
 	}
 
-	log = logger.New(os.Stdout, logger.LevelInfo, "SALES", traceIDFn)
+	log = logger.New(os.Stdout, logger.LevelInfo, "GEOFENCE", traceIDFn)
 
 	// -------------------------------------------------------------------------
 
@@ -60,10 +61,19 @@ func run(ctx context.Context, log *logger.Logger) error {
 			DebugHost          string        `conf:"default:0.0.0.0:3010"`
 			CORSAllowedOrigins []string      `conf:"default:*"`
 		}
+		DB struct {
+			User         string `conf:"default:postgres"`
+			Password     string `conf:"default:postgres,mask"`
+			Host         string `conf:"default:database-service"`
+			Name         string `conf:"default:postgres"`
+			MaxIdleConns int    `conf:"default:0"`
+			MaxOpenConns int    `conf:"default:0"`
+			DisableTLS   bool   `conf:"default:true"`
+		}
 	}{
 		Version: conf.Version{
 			Build: build,
-			Desc:  "Sales",
+			Desc:  "Geofence",
 		},
 	}
 
@@ -94,6 +104,26 @@ func run(ctx context.Context, log *logger.Logger) error {
 	expvar.NewString("build").Set(cfg.Build)
 
 	// -------------------------------------------------------------------------
+	// Database Support
+
+	log.Info(ctx, "startup", "status", "initializing database support", "hostport", cfg.DB.Host)
+
+	db, err := sqldb.Open(sqldb.Config{
+		User:         cfg.DB.User,
+		Password:     cfg.DB.Password,
+		Host:         cfg.DB.Host,
+		Name:         cfg.DB.Name,
+		MaxIdleConns: cfg.DB.MaxIdleConns,
+		MaxOpenConns: cfg.DB.MaxOpenConns,
+		DisableTLS:   cfg.DB.DisableTLS,
+	})
+	if err != nil {
+		return fmt.Errorf("connecting to db: %w", err)
+	}
+
+	defer db.Close()
+
+	// -------------------------------------------------------------------------
 	// Start API Service
 
 	log.Info(ctx, "startup", "status", "initializing V1 API support")
@@ -104,6 +134,7 @@ func run(ctx context.Context, log *logger.Logger) error {
 	cfgMux := mux.Config{
 		Build: build,
 		Log:   log,
+		DB:    db,
 	}
 
 	webAPI := mux.WebAPI(cfgMux)
