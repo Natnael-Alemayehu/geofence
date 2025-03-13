@@ -1,4 +1,5 @@
-INSERT INTO users (user_id, name, email, roles, password_hash, department, enabled, date_created, date_updated) VALUES
-	('5cf37266-3473-4006-984f-9325122678b7', 'Admin Gopher', 'admin@example.com', '{ADMIN}', '$2a$10$1ggfMVZV6Js0ybvJufLRUOWHS5f6KneuP0XwwHpJ8L8ipdry9f2/a', NULL, true, '2019-03-24 00:00:00', '2019-03-24 00:00:00'),
-	('45b5fbd3-755f-4379-8f07-a58d4a30fa2f', 'User Gopher', 'user@example.com', '{USER}', '$2a$10$9/XASPKBbJKVfCAZKDH.UuhsuALDr5vVm6VrYA9VFR8rccK86C1hW', NULL, true, '2019-03-24 00:00:00', '2019-03-24 00:00:00')
-ON CONFLICT DO NOTHING;
+INSERT INTO geolocation (location_id, geojson) VALUES
+(
+    'delivery_zone_1',
+    ST_GeomFromGeoJSON('{ "type": "Polygon", "coordinates": [ [ [ 38.74256704424312, 9.033138471223111 ], [ 38.736467448797924, 9.032775582701646 ], [ 38.73709210616215, 9.030017618002177 ], [ 38.738194442688865, 9.025989500072342 ], [ 38.74322844615821, 9.02439275618923 ], [ 38.74894222381815, 9.028021709336926 ], [ 38.747435697232305, 9.032194960307649 ], [ 38.74256704424312, 9.033138471223111 ] ] ] }')
+)

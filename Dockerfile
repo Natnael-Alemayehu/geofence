@@ -13,6 +13,10 @@ COPY vendor ./vendor
 # Copy the source code into the container
 COPY . .
 
+# Build the admin application.
+WORKDIR /app/api/tooling/admin
+RUN go build -o admin
+
 # Build the application
 WORKDIR /app/api/service/geofence
 RUN go build -o geofence
@@ -22,6 +26,7 @@ FROM alpine:latest
 
 # Copy the pre-built binary file from the builder stage
 COPY --from=builder /app/api/service/geofence/geofence /app/geofence
+COPY --from=builder /app/api/tooling/admin/admin /app/admin
 
 # Expose the port the application listens on
 EXPOSE 3000

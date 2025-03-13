@@ -42,8 +42,26 @@ list:
 
 
 # ==============================================================================
-docker-build: 
-	docker build -t geofence .
+build: 
+	sudo docker build -t geofence .
 
-docker-compose-up:
+compose-up:
 	docker compose -f zarf/compose/docker_compose.yaml up -d	
+
+compose-down:
+	docker compose -f zarf/compose/docker_compose.yaml down
+
+compose-restart: build compose-down compose-up
+
+
+# ==============================================================================
+# Administration
+
+migrate:
+	export GEOFENCE_DB_HOST=localhost; go run api/tooling/admin/main.go migrate
+
+seed: migrate
+	export GEOFENCE_DB_HOST=localhost; go run api/tooling/admin/main.go seed
+
+pgcli:
+	pgcli postgresql://postgres:postgres@localhost

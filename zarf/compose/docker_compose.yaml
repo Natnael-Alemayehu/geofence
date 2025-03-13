@@ -17,8 +17,25 @@ services:
       retries: 2
       start_period: 60s
 
+  init-migrate-seed:
+    image: geofence
+    pull_policy: never
+    container_name: init-migrate-seed
+    restart: unless-stopped
+    entrypoint: ['./app/admin', 'migrate-seed']
+    environment:
+      - GEOFENCE_DB_USER=postgres
+      - GEOFENCE_DB_PASSWORD=postgres
+      - GEOFENCE_DB_HOST=database
+      - GEOFENCE_DB_DISABLE_TLS=true  
+    deploy:
+      restart_policy:
+        condition: none
+    depends_on:
+      - database
+
   database:
-    image: postgres:17.3
+    image: postgis/postgis:17-3.4
     container_name: database
     ports:
       - "5432:5432"
