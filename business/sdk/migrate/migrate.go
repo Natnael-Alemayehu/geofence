@@ -30,8 +30,6 @@ func Migrate(ctx context.Context, db *sqlx.DB) error {
 		return fmt.Errorf("status check database: %w", err)
 	}
 
-	fmt.Println("********-******** I am here")
-
 	driver, err := generic.New(db.DB, postgres.Dialect{})
 	if err != nil {
 		return fmt.Errorf("construct darwin driver: %w", err)

@@ -3,15 +3,23 @@ package geofenceapp
 import (
 	"net/http"
 
+	"github.com/Natnael-Alemayehu/geofence/business/domain/geofencebus"
 	"github.com/Natnael-Alemayehu/geofence/foundation/logger"
 	"github.com/Natnael-Alemayehu/geofence/foundation/web"
 )
 
+type Config struct {
+	Log         *logger.Logger
+	GeofenceBus *geofencebus.Business
+}
+
 // Routes adds specific routes for this group.
-func Routes(app *web.App, log *logger.Logger) {
+func Routes(app *web.App, cfg Config) {
 	const version = "v1"
 
-	api := newApp()
+	api := newApp(cfg.GeofenceBus)
 
 	app.HandlerFunc(http.MethodPost, version, "/verify_location", api.VerifyLocation)
+	app.HandlerFunc(http.MethodGet, version, "/location/{location_id}", api.SearchLocation)
+	app.HandlerFunc(http.MethodPost, version, "/location", api.CreateGeolocation)
 }

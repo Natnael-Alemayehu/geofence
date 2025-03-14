@@ -9,6 +9,8 @@ import (
 	"github.com/Natnael-Alemayehu/geofence/app/domain/geofenceapp"
 	"github.com/Natnael-Alemayehu/geofence/app/domain/statusapp"
 	"github.com/Natnael-Alemayehu/geofence/app/sdk/mid"
+	"github.com/Natnael-Alemayehu/geofence/business/domain/geofencebus"
+	"github.com/Natnael-Alemayehu/geofence/business/domain/geofencebus/stores/geolocationdb"
 	"github.com/Natnael-Alemayehu/geofence/foundation/logger"
 	"github.com/Natnael-Alemayehu/geofence/foundation/web"
 	"github.com/jmoiron/sqlx"
@@ -34,7 +36,12 @@ func WebAPI(cfg Config) http.Handler {
 		mid.Panics(),
 	)
 
-	geofenceapp.Routes(app, cfg.Log)
+	geofenceBus := geofencebus.NewBusiness(cfg.Log, geolocationdb.NewStore(cfg.Log, cfg.DB))
+
+	geofenceapp.Routes(app, geofenceapp.Config{
+		Log:         cfg.Log,
+		GeofenceBus: geofenceBus,
+	})
 	statusapp.Routes(app, cfg.Log)
 
 	return app

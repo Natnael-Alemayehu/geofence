@@ -4,11 +4,22 @@ import (
 	"encoding/json"
 
 	"github.com/Natnael-Alemayehu/geofence/app/sdk/geofence"
+	"github.com/Natnael-Alemayehu/geofence/business/domain/geofencebus"
 )
 
 type Zone struct {
-	ID      string      `json:"id"`
-	GeoJSON interface{} `json:"geojson"`
+	ID      string `json:"id"`
+	GeoJSON string `json:"geojson"`
+}
+
+func (a *Zone) Decode(data []byte) error {
+	return json.Unmarshal(data, a)
+}
+
+// Encode implements the encoder interface.
+func (app Zone) Encode() ([]byte, string, error) {
+	data, err := json.Marshal(app)
+	return data, "application/json", err
 }
 
 type Delivery struct {
@@ -50,4 +61,19 @@ func toSDKVerification(geover geofence.Verification) Verification {
 		Status:     st_geover,
 		LocationID: geover.LocationID,
 	}
+}
+
+func toAppGeolocation(loc geofencebus.Geolocation) Zone {
+	return Zone{
+		ID:      loc.Location_ID,
+		GeoJSON: loc.GeoJSON,
+	}
+}
+
+func toBusGeolocation(loc Zone) geofencebus.Geolocation {
+	busGeo := geofencebus.Geolocation{
+		Location_ID: loc.ID,
+		GeoJSON:     loc.GeoJSON,
+	}
+	return busGeo
 }

@@ -22,6 +22,15 @@ run-verify-outside:
 	-d '{"latitude":9.02921925586169,"longitude":40.741409590890214}' \
 	localhost:3000/v1/verify_location
 
+run-search-location:
+	curl -i -X GET localhost:3000/v1/location/delivery_zone_1
+
+run-create-location:
+	curl -i -X POST \
+	-H 'Content-Type: application/json' \
+	-d '{"id":"new_zone","geojson":{"type":"Feature","geometry":{"coordinates":[[[38.752323744414866,9.03534632727542],[38.752323744414866,9.034837522071527],[38.75271335641881,9.034837522071527],[38.75271335641881,9.03534632727542],[38.752323744414866,9.03534632727542]]],"type":"Polygon"}}}' \
+	localhost:3000/v1/location
+
 # ==============================================================================
 # Modules support
 
