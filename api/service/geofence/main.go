@@ -123,15 +123,6 @@ func run(ctx context.Context, log *logger.Logger) error {
 	log.Info(ctx, "DATABASE CONFIG", "Host", cfg.DB.Host)
 	log.Info(ctx, "DATABASE CONFIG", "Name", cfg.DB.Name)
 
-	// db, err := sqldb.Open(sqldb.Config{
-	// 	User:         "postgres",
-	// 	Password:     "postgres",
-	// 	Host:         "database",
-	// 	Name:         "postgres",
-	// 	MaxIdleConns: 5,
-	// 	MaxOpenConns: 5,
-	// 	DisableTLS:   true,
-	// })
 	if err != nil {
 		return fmt.Errorf("connecting to db: %w", err)
 	}

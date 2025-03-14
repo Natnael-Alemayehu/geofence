@@ -22,6 +22,8 @@ func (app Zone) Encode() ([]byte, string, error) {
 	return data, "application/json", err
 }
 
+// ====================================================================================
+
 type Delivery struct {
 	Latitude  float64 `json:"latitude" validate:"required"`
 	Longitude float64 `json:"longitude" validate:"required"`
@@ -31,6 +33,8 @@ type Delivery struct {
 func (a *Delivery) Decode(data []byte) error {
 	return json.Unmarshal(data, a)
 }
+
+// ====================================================================================
 
 type Verification struct {
 	Latitude   float64  `json:"latitude" `
