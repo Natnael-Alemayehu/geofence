@@ -31,13 +31,26 @@ func (s *Store) Create(ctx context.Context, usr geofencebus.Geolocation) error {
 	INSERT INTO geolocation
 		(location_id, geojson)
 	VALUES
-		:location_id,
-		ST_GeomFromGeoJSON(:geojson)`
-
+		(:location_id, ST_GeomFromGeoJSON(:geojson))`
 	if err := sqldb.NamedExecContext(ctx, s.log, s.db, q, toDBGeolocation(usr)); err != nil {
 		if errors.Is(err, sqldb.ErrDBDuplicatedEntry) {
 			return fmt.Errorf("namedexeccontext: %w", geofencebus.ErrUniqueLocation)
 		}
+		return fmt.Errorf("namedexeccontext: %w", err)
+	}
+
+	return nil
+}
+
+// Delete removes a user from the database.
+func (s *Store) Delete(ctx context.Context, locationID string) error {
+	const q = `
+	DELETE FROM
+		geolocation
+	WHERE
+		location_id = :location_id`
+
+	if err := sqldb.NamedExecContext(ctx, s.log, s.db, q, locationID); err != nil {
 		return fmt.Errorf("namedexeccontext: %w", err)
 	}
 

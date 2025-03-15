@@ -11,7 +11,7 @@ COPY go.mod go.sum ./
 COPY vendor ./vendor
 
 # Copy the source code into the container
-COPY . .
+COPY . .     
 
 # Build the admin application.
 WORKDIR /app/api/tooling/admin
@@ -30,11 +30,6 @@ COPY --from=builder /app/api/tooling/admin/admin /app/admin
 
 # Expose the port the application listens on
 EXPOSE 3000
-
-# # Set environment variables
-# ENV GOMAXPROCS=${GOMAXPROCS:-1}
-# ENV GOGC=${GOGC:-off}
-# ENV GOMEMLIMIT=${GOMEMLIMIT:-8000MiB}
 
 # Command to run the executable
 CMD ["/app/geofence"]

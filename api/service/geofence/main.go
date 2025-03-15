@@ -64,7 +64,7 @@ func run(ctx context.Context, log *logger.Logger) error {
 		DB struct {
 			User         string `conf:"default:postgres"`
 			Password     string `conf:"default:postgres,mask"`
-			Host         string `conf:"default:database"`
+			Host         string `conf:"default:localhost"`
 			Name         string `conf:"default:postgres"`
 			MaxIdleConns int    `conf:"default:0"`
 			MaxOpenConns int    `conf:"default:0"`
@@ -117,11 +117,6 @@ func run(ctx context.Context, log *logger.Logger) error {
 		MaxOpenConns: cfg.DB.MaxOpenConns,
 		DisableTLS:   cfg.DB.DisableTLS,
 	})
-
-	log.Info(ctx, "DATABASE CONFIG", "user", cfg.DB.User)
-	log.Info(ctx, "DATABASE CONFIG", "password", cfg.DB.Password)
-	log.Info(ctx, "DATABASE CONFIG", "Host", cfg.DB.Host)
-	log.Info(ctx, "DATABASE CONFIG", "Name", cfg.DB.Name)
 
 	if err != nil {
 		return fmt.Errorf("connecting to db: %w", err)

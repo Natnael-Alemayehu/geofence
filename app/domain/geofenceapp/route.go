@@ -21,5 +21,6 @@ func Routes(app *web.App, cfg Config) {
 
 	app.HandlerFunc(http.MethodPost, version, "/verify_location", api.VerifyLocation)
 	app.HandlerFunc(http.MethodGet, version, "/location/{location_id}", api.SearchLocation)
-	app.HandlerFunc(http.MethodPost, version, "/location", api.CreateGeolocation)
+	app.HandlerFunc(http.MethodPost, version, "/location", api.CreateGeoLocation)
+	app.HandlerFunc(http.MethodGet, version, "/location/delete/{location_id}", api.DeleteGeoLocation)
 }

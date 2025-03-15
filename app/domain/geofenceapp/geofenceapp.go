@@ -56,7 +56,7 @@ func (a *app) SearchLocation(ctx context.Context, r *http.Request) web.Encoder {
 	return toAppGeolocation(geoloc)
 }
 
-func (a *app) CreateGeolocation(ctx context.Context, r *http.Request) web.Encoder {
+func (a *app) CreateGeoLocation(ctx context.Context, r *http.Request) web.Encoder {
 	var newloc Zone
 	if err := web.Decode(r, &newloc); err != nil {
 		return errs.Newf(errs.InvalidArgument, "Decode: %v", err)
@@ -69,4 +69,22 @@ func (a *app) CreateGeolocation(ctx context.Context, r *http.Request) web.Encode
 	}
 
 	return toAppGeolocation(loc)
+}
+
+func (a *app) DeleteGeoLocation(ctx context.Context, r *http.Request) web.Encoder {
+	id := web.Param(r, "location_id")
+
+	if id == "" {
+		return errs.New(errs.InvalidArgument, fmt.Errorf("not found"))
+	}
+
+	if err := a.geolocBus.Delete(ctx, id); err != nil {
+		return errs.Newf(errs.Aborted, "delete: %v", err)
+	}
+
+	mes := fmt.Sprintf("%v is deleted successfully", id)
+
+	return message{
+		Message: mes,
+	}
 }

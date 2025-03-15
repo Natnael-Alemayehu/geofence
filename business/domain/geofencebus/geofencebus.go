@@ -14,7 +14,8 @@ var (
 )
 
 type Storer interface {
-	Create(ctx context.Context, prd Geolocation) error
+	Create(ctx context.Context, glc Geolocation) error
+	Delete(ctx context.Context, locationID string) error
 	QueryByID(ctx context.Context, productID string) (Geolocation, error)
 }
 
@@ -50,4 +51,14 @@ func (b *Business) QueryByID(ctx context.Context, locationID string) (Geolocatio
 	}
 
 	return prd, nil
+}
+
+// Delete removes the specified user.
+func (b *Business) Delete(ctx context.Context, locationID string) error {
+
+	if err := b.storer.Delete(ctx, locationID); err != nil {
+		return fmt.Errorf("delete: %w", err)
+	}
+
+	return nil
 }

@@ -1,6 +1,8 @@
 package geolocationdb
 
-import "github.com/Natnael-Alemayehu/geofence/business/domain/geofencebus"
+import (
+	"github.com/Natnael-Alemayehu/geofence/business/domain/geofencebus"
+)
 
 type geolocation struct {
 	Location_ID string

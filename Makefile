@@ -4,7 +4,7 @@ SHELL = $(if $(wildcard $(SHELL_PATH)),/bin/ash,/bin/bash)
 
 # ==============================================================================
 # Geofense
-run-geofence:
+start-server:
 	go run api/service/geofence/main.go | go run api/tooling/logfmt/main.go
 
 run-status:
@@ -28,8 +28,11 @@ run-search-location:
 run-create-location:
 	curl -i -X POST \
 	-H 'Content-Type: application/json' \
-	-d '{"id":"new_zone","geojson":{"type":"Feature","geometry":{"coordinates":[[[38.752323744414866,9.03534632727542],[38.752323744414866,9.034837522071527],[38.75271335641881,9.034837522071527],[38.75271335641881,9.03534632727542],[38.752323744414866,9.03534632727542]]],"type":"Polygon"}}}' \
+	-d '{"id":"new_zone","geojson":{"type":"Polygon", "coordinates":[[[38.752323744414866,9.03534632727542],[38.752323744414866,9.034837522071527],[38.75271335641881,9.034837522071527],[38.75271335641881,9.03534632727542],[38.752323744414866,9.03534632727542]]]}}' \
 	localhost:3000/v1/location
+
+run-delete-location:
+	curl -i -X POST localhost:3000/v1/location/delete/
 
 # ==============================================================================
 # Modules support
@@ -62,6 +65,9 @@ compose-down:
 
 compose-restart: build compose-down compose-up
 
+restart:
+	docker compose -f zarf/compose/docker_compose.yaml restart geofence
+
 
 # ==============================================================================
 # Administration
@@ -74,3 +80,43 @@ seed: migrate
 
 pgcli:
 	pgcli postgresql://postgres:postgres@localhost
+
+
+# ==============================================================================
+# Start Development Database
+
+start-db:
+	@docker rm -f database >/dev/null 2>&1 || true
+	@docker network create mynet >/dev/null 2>&1 || true
+	@mkdir -p docker-entrypoint-initdb.d
+	@printf "%s\n" \
+		"-- Version: 1.01" \
+		"-- Description: Create table geolocation with PostGIS support" \
+		"" \
+		"CREATE EXTENSION IF NOT EXISTS postgis;" \
+		"" \
+		"CREATE TABLE geolocation (" \
+		"    location_id TEXT NOT NULL," \
+		"    geojson     GEOMETRY NOT NULL," \
+		"    PRIMARY KEY (location_id)" \
+		");" > docker-entrypoint-initdb.d/01_migrate.sql
+	
+	@printf "%s\n" \
+		"INSERT INTO geolocation (location_id, geojson) VALUES (" \
+		"    'delivery_zone_1'," \
+		"    ST_GeomFromGeoJSON('{ \"type\": \"Polygon\", \"coordinates\": [[[38.74256704424312,9.033138471223111],[38.736467448797924,9.032775582701646],[38.73709210616215,9.030017618002177],[38.738194442688865,9.025989500072342],[38.74322844615821,9.02439275618923],[38.74894222381815,9.028021709336926],[38.747435697232305,9.032194960307649],[38.74256704424312,9.033138471223111]]]}')" \
+		"),( " \
+		"	'test_del'," \
+		"    ST_GeomFromGeoJSON('{ \"type\": \"Polygon\", \"coordinates\": [[[38.74256704424312,9.033138471223111],[38.736467448797924,9.032775582701646],[38.73709210616215,9.030017618002177],[38.738194442688865,9.025989500072342],[38.74322844615821,9.02439275618923],[38.74894222381815,9.028021709336926],[38.747435697232305,9.032194960307649],[38.74256704424312,9.033138471223111]]]}')" \
+		");" > docker-entrypoint-initdb.d/02_seed.sql
+	
+	docker run -d --name database --network mynet \
+		-e POSTGRES_USER=postgres \
+		-e POSTGRES_PASSWORD=postgres \
+		-e POSTGRES_DB=postgres \
+		-p 5432:5432 \
+		-v "$(shell pwd)/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d" \
+		postgis/postgis:17-3.4
+	@sleep 5
+	@docker logs database
+	@rm -rf docker-entrypoint-initdb.d
