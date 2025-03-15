@@ -2,9 +2,7 @@ package geofenceapp
 
 import (
 	"encoding/json"
-	"fmt"
 
-	"github.com/Natnael-Alemayehu/geofence/app/sdk/geofence"
 	"github.com/Natnael-Alemayehu/geofence/business/domain/geofencebus"
 )
 
@@ -26,14 +24,23 @@ func (app Zone) Encode() ([]byte, string, error) {
 // ====================================================================================
 
 type Delivery struct {
-	Latitude  float64 `json:"latitude" validate:"required"`
-	Longitude float64 `json:"longitude" validate:"required"`
+	LocationID string  `json:"location_id" validate:"required"`
+	Latitude   float64 `json:"latitude" validate:"required"`
+	Longitude  float64 `json:"longitude" validate:"required"`
 }
 
 // Decode implements the decoder interface.
 func (a *Delivery) Decode(data []byte) error {
-	fmt.Printf("\n\n %v \n", string(data))
 	return json.Unmarshal(data, a)
+}
+
+func toBusDelivery(delapp Delivery) geofencebus.Delivery {
+	del := geofencebus.Delivery{
+		LocationID: delapp.LocationID,
+		Latitude:   delapp.Latitude,
+		Longitude:  delapp.Longitude,
+	}
+	return del
 }
 
 // ====================================================================================
@@ -51,15 +58,7 @@ func (app Verification) Encode() ([]byte, string, error) {
 	return data, "application/json", err
 }
 
-func tosdkDelivery(delapp Delivery) geofence.Delivery {
-	del := geofence.Delivery{
-		Latitude:  delapp.Latitude,
-		Longitude: delapp.Longitude,
-	}
-	return del
-}
-
-func toSDKVerification(geover geofence.Verification) Verification {
+func toSDKVerification(geover geofencebus.Verification) Verification {
 	st_geover := geover.Status.ToString(geover.Status)
 	return Verification{
 		Latitude:   geover.Latitude,

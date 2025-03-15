@@ -13,13 +13,13 @@ run-status:
 run-verify-inside:
 	curl -i -X POST \
 	-H 'Content-Type: application/json' \
-	-d '{"latitude":9.02921925586169,"longitude":38.741409590890214}' \
+	-d '{"location_id":"delivery_zone_1","latitude":9.02921925586169,"longitude":38.741409590890214}' \
 	localhost:3000/v1/verify_location
 
 run-verify-outside:
 	curl -i -X POST \
 	-H 'Content-Type: application/json' \
-	-d '{"latitude":9.02921925586169,"longitude":40.741409590890214}' \
+	-d '{"location_id":"delivery_zone_1","latitude":9.02921925586169,"longitude":40.741409590890214}' \
 	localhost:3000/v1/verify_location
 
 run-search-location:
@@ -83,7 +83,7 @@ pgcli:
 
 
 # ==============================================================================
-# Start Development Database
+# Start Development Images
 
 start-db:
 	@docker rm -f database >/dev/null 2>&1 || true
@@ -120,3 +120,19 @@ start-db:
 	@sleep 5
 	@docker logs database
 	@rm -rf docker-entrypoint-initdb.d
+
+start-tile:
+	docker run -p 9851:9851 -d --name tile tile38/tile38 
+
+start-dev: start-db start-tile
+
+
+# ==============================================================================
+# Stop Development Docker Images
+stop-db:
+	@docker rm -f database >/dev/null 2>&1 || true
+
+stop-tile:
+	@docker rm -f tile >/dev/null 2>&1 || true
+
+stop-dev: stop-db stop-tile

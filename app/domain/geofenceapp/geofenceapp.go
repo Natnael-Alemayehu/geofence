@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/Natnael-Alemayehu/geofence/app/sdk/errs"
-	"github.com/Natnael-Alemayehu/geofence/app/sdk/geofence"
 	"github.com/Natnael-Alemayehu/geofence/business/domain/geofencebus"
 	"github.com/Natnael-Alemayehu/geofence/foundation/web"
 )
@@ -28,9 +27,9 @@ func (a *app) VerifyLocation(ctx context.Context, r *http.Request) web.Encoder {
 		return errs.New(errs.InvalidArgument, err)
 	}
 
-	delsdk := tosdkDelivery(delivery)
+	delsdk := toBusDelivery(delivery)
 
-	ver, err := geofence.VerifyCoordinate(ctx, delsdk)
+	ver, err := a.geolocBus.VerifyCoordinate(ctx, delsdk)
 	if err != nil {
 		return errs.Newf(errs.Aborted, "Verification failed: %v", err)
 	}

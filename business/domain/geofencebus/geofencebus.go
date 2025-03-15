@@ -53,6 +53,21 @@ func (b *Business) QueryByID(ctx context.Context, locationID string) (Geolocatio
 	return prd, nil
 }
 
+func (b *Business) VerifyCoordinate(ctx context.Context, del Delivery) (Verification, error) {
+
+	geoloc, err := b.QueryByID(ctx, del.LocationID)
+	if err != nil {
+		return Verification{}, fmt.Errorf("verify: [%v]", err)
+	}
+
+	verif, err := checkCoordinate(ctx, del, geoloc)
+	if err != nil {
+		return Verification{}, fmt.Errorf("check coordinate: %v", err)
+	}
+
+	return verif, nil
+}
+
 // Delete removes the specified user.
 func (b *Business) Delete(ctx context.Context, locationID string) error {
 
