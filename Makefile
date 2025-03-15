@@ -32,7 +32,7 @@ run-create-location:
 	localhost:3000/v1/location
 
 run-delete-location:
-	curl -i -X POST localhost:3000/v1/location/delete/
+	curl -i -X GET localhost:3000/v1/location/delete/test_del
 
 # ==============================================================================
 # Modules support

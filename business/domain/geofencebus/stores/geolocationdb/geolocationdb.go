@@ -44,13 +44,18 @@ func (s *Store) Create(ctx context.Context, usr geofencebus.Geolocation) error {
 
 // Delete removes a user from the database.
 func (s *Store) Delete(ctx context.Context, locationID string) error {
+	data := struct {
+		ID string `db:"location_id"`
+	}{
+		ID: locationID,
+	}
 	const q = `
 	DELETE FROM
 		geolocation
 	WHERE
 		location_id = :location_id`
 
-	if err := sqldb.NamedExecContext(ctx, s.log, s.db, q, locationID); err != nil {
+	if err := sqldb.NamedExecContext(ctx, s.log, s.db, q, data); err != nil {
 		return fmt.Errorf("namedexeccontext: %w", err)
 	}
 
