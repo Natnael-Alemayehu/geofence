@@ -85,7 +85,7 @@ pgcli:
 # ==============================================================================
 # Start Development Images
 
-start-db:
+dev-db-up:
 	@docker rm -f database >/dev/null 2>&1 || true
 	@docker network create mynet >/dev/null 2>&1 || true
 	@mkdir -p docker-entrypoint-initdb.d
@@ -117,22 +117,22 @@ start-db:
 		-p 5432:5432 \
 		-v "$(shell pwd)/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d" \
 		postgis/postgis:17-3.4
-	@sleep 5
+	@sleep 15
 	@docker logs database
 	@rm -rf docker-entrypoint-initdb.d
 
-start-tile:
+dev-tile-up:
 	docker run -p 9851:9851 -d --name tile tile38/tile38 
 
-start-dev: start-db start-tile
+dev-up: dev-db-up start-tile
 
 
 # ==============================================================================
 # Stop Development Docker Images
-stop-db:
+dev-db-down:
 	@docker rm -f database >/dev/null 2>&1 || true
 
-stop-tile:
+stop-tile-down:
 	@docker rm -f tile >/dev/null 2>&1 || true
 
-stop-dev: stop-db stop-tile
+dev-down: dev-db-down stop-tile-down
