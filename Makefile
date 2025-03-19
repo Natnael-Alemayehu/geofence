@@ -84,6 +84,14 @@ seed: migrate
 pgcli:
 	pgcli postgresql://postgres:postgres@localhost
 
+# ==============================================================================
+# Start Frontend
+start-frontend:
+	cd api/frontend && npm start
+
+stop-frontend:
+	@pkill -f "react-scripts" || echo "No frontend process running"
+
 
 # ==============================================================================
 # Start Development Images
