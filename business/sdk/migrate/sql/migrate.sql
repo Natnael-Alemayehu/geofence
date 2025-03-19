@@ -6,6 +6,7 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 
 CREATE TABLE geolocation (
     location_id TEXT NOT NULL,
+    location_name TEXT NOT NULL,
     geojson     GEOMETRY NOT NULL,          -- Use PostGIS geometry type
     PRIMARY KEY (location_id)
 );

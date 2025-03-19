@@ -39,7 +39,7 @@ func (a *app) VerifyLocation(ctx context.Context, r *http.Request) web.Encoder {
 	return verif
 }
 
-func (a *app) SearchLocation(ctx context.Context, r *http.Request) web.Encoder {
+func (a *app) SearchLocationbyID(ctx context.Context, r *http.Request) web.Encoder {
 
 	id := web.Param(r, "location_id")
 
@@ -50,6 +50,22 @@ func (a *app) SearchLocation(ctx context.Context, r *http.Request) web.Encoder {
 	geoloc, err := a.geolocBus.QueryByID(ctx, id)
 	if err != nil {
 		return errs.Newf(errs.Aborted, "Query by ID: %v", err)
+	}
+
+	return toAppGeolocation(geoloc)
+}
+
+func (a *app) SearchLocationbyName(ctx context.Context, r *http.Request) web.Encoder {
+
+	id := web.Param(r, "location_name")
+
+	if id == "" {
+		return errs.Newf(errs.Aborted, "location name formatting: %v", fmt.Errorf("not found"))
+	}
+
+	geoloc, err := a.geolocBus.QueryByName(ctx, id)
+	if err != nil {
+		return errs.Newf(errs.Aborted, "Query by Name: %v", err)
 	}
 
 	return toAppGeolocation(geoloc)

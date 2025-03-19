@@ -17,6 +17,7 @@ type Storer interface {
 	Create(ctx context.Context, glc Geolocation) error
 	Delete(ctx context.Context, locationID string) error
 	QueryByID(ctx context.Context, productID string) (Geolocation, error)
+	QueryByName(ctx context.Context, productID string) (Geolocation, error)
 }
 
 type Business struct {
@@ -48,6 +49,17 @@ func (b *Business) QueryByID(ctx context.Context, locationID string) (Geolocatio
 	prd, err := b.storer.QueryByID(ctx, locationID)
 	if err != nil {
 		return Geolocation{}, fmt.Errorf("query: productID[%s]: %w", locationID, err)
+	}
+
+	return prd, nil
+}
+
+// QueryByName finds the Location by Name.
+func (b *Business) QueryByName(ctx context.Context, locationName string) (Geolocation, error) {
+
+	prd, err := b.storer.QueryByName(ctx, locationName)
+	if err != nil {
+		return Geolocation{}, fmt.Errorf("query: productID[%s]: %w", locationName, err)
 	}
 
 	return prd, nil

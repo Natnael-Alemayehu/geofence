@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 
 	"github.com/Natnael-Alemayehu/geofence/business/domain/geofencebus"
+	"github.com/google/uuid"
 )
 
 type Zone struct {
-	ID      string                 `json:"id"`
-	GeoJSON map[string]interface{} `json:"geojson"`
+	LocationName string                 `json:"name"`
+	GeoJSON      map[string]interface{} `json:"geojson"`
 }
 
 func (a *Zone) Decode(data []byte) error {
@@ -72,8 +73,8 @@ func toAppGeolocation(loc geofencebus.Geolocation) Zone {
 	var geoJSONMap map[string]interface{}
 	json.Unmarshal([]byte(loc.GeoJSON), &geoJSONMap)
 	return Zone{
-		ID:      loc.Location_ID,
-		GeoJSON: geoJSONMap,
+		LocationName: loc.Location_Name,
+		GeoJSON:      geoJSONMap,
 	}
 }
 
@@ -83,9 +84,12 @@ func toBusGeolocation(loc Zone) geofencebus.Geolocation {
 		return geofencebus.Geolocation{}
 	}
 
+	id := uuid.New()
+
 	busGeo := geofencebus.Geolocation{
-		Location_ID: loc.ID,
-		GeoJSON:     string(geoJSONString),
+		Location_ID:   id,
+		Location_Name: loc.LocationName,
+		GeoJSON:       string(geoJSONString),
 	}
 	return busGeo
 }

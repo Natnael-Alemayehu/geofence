@@ -20,7 +20,8 @@ func Routes(app *web.App, cfg Config) {
 	api := newApp(cfg.GeofenceBus)
 
 	app.HandlerFunc(http.MethodPost, version, "/verify_location", api.VerifyLocation)
-	app.HandlerFunc(http.MethodGet, version, "/location/{location_id}", api.SearchLocation)
+	app.HandlerFunc(http.MethodGet, version, "/location/id/{location_id}", api.SearchLocationbyID)
+	app.HandlerFunc(http.MethodGet, version, "/location/name/{location_name}", api.SearchLocationbyName)
 	app.HandlerFunc(http.MethodPost, version, "/location", api.CreateGeoLocation)
 	app.HandlerFunc(http.MethodGet, version, "/location/delete/{location_id}", api.DeleteGeoLocation)
 }

@@ -29,9 +29,9 @@ func NewStore(log *logger.Logger, db *sqlx.DB) *Store {
 func (s *Store) Create(ctx context.Context, usr geofencebus.Geolocation) error {
 	const q = `
 	INSERT INTO geolocation
-		(location_id, geojson)
+		(location_id,location_name, geojson)
 	VALUES
-		(:location_id, ST_GeomFromGeoJSON(:geojson))`
+		(:location_id,:location_name ,ST_GeomFromGeoJSON(:geojson))`
 	if err := sqldb.NamedExecContext(ctx, s.log, s.db, q, toDBGeolocation(usr)); err != nil {
 		if errors.Is(err, sqldb.ErrDBDuplicatedEntry) {
 			return fmt.Errorf("namedexeccontext: %w", geofencebus.ErrUniqueLocation)
@@ -72,11 +72,38 @@ func (s *Store) QueryByID(ctx context.Context, locationID string) (geofencebus.G
 
 	const q = `
 	SELECT
-	    location_id, ST_AsGeoJSON(geojson) as geojson
+	    location_name, location_id, ST_AsGeoJSON(geojson) as geojson
 	FROM
 		geolocation
 	WHERE
 		location_id = :location_id`
+
+	var dbPrd geolocation
+	if err := sqldb.NamedQueryStruct(ctx, s.log, s.db, q, data, &dbPrd); err != nil {
+		if errors.Is(err, sqldb.ErrDBNotFound) {
+			return geofencebus.Geolocation{}, fmt.Errorf("db: %w", geofencebus.ErrNotFound)
+		}
+		return geofencebus.Geolocation{}, fmt.Errorf("db: %w", err)
+	}
+
+	return toBusGeolocation(dbPrd)
+}
+
+// QueryByID finds the product identified by a given ID.
+func (s *Store) QueryByName(ctx context.Context, locationName string) (geofencebus.Geolocation, error) {
+	data := struct {
+		ID string `db:"location_name"`
+	}{
+		ID: locationName,
+	}
+
+	const q = `
+	SELECT
+	    location_name, location_id, ST_AsGeoJSON(geojson) as geojson
+	FROM
+		geolocation
+	WHERE
+		location_name = :location_name`
 
 	var dbPrd geolocation
 	if err := sqldb.NamedQueryStruct(ctx, s.log, s.db, q, data, &dbPrd); err != nil {

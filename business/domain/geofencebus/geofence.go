@@ -14,7 +14,7 @@ func checkCoordinate(ctx context.Context, delivery Delivery, geoloc Geolocation)
 	})
 
 	zone := Zone{
-		ID:      geoloc.Location_ID,
+		ID:      geoloc.Location_Name,
 		GeoJSON: geoloc.GeoJSON,
 	}
 
