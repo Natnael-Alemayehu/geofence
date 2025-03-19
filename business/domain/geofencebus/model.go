@@ -57,8 +57,8 @@ func (Status) ToString(st Status) string {
 }
 
 type Verification struct {
-	Latitude   float64
-	Longitude  float64
-	Status     Status
-	LocationID []string
+	Latitude     float64
+	Longitude    float64
+	Status       Status
+	LocationName []string
 }

@@ -50,7 +50,7 @@ func checkCoordinate(ctx context.Context, delivery Delivery, geoloc Geolocation)
 			// Determine if the point is inside based on whether we found any IDs
 			if len(idStrings) > 0 {
 				ver.Status = Status{"Inside"}
-				ver.LocationID = idStrings
+				ver.LocationName = idStrings
 				return ver, nil
 			} else {
 				ver.Status = Status{"Outside"}

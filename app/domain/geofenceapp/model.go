@@ -47,10 +47,10 @@ func toBusDelivery(delapp Delivery) geofencebus.Delivery {
 // ====================================================================================
 
 type Verification struct {
-	Latitude   float64  `json:"latitude" `
-	Longitude  float64  `json:"longitude"`
-	Status     string   `json:"status"`
-	LocationID []string `json:"location_id,omitempty"`
+	Latitude     float64  `json:"latitude" `
+	Longitude    float64  `json:"longitude"`
+	Status       string   `json:"status"`
+	LocationName []string `json:"location_name,omitempty"`
 }
 
 // Encode implements the encoder interface.
@@ -62,10 +62,10 @@ func (app Verification) Encode() ([]byte, string, error) {
 func toSDKVerification(geover geofencebus.Verification) Verification {
 	st_geover := geover.Status.ToString(geover.Status)
 	return Verification{
-		Latitude:   geover.Latitude,
-		Longitude:  geover.Longitude,
-		Status:     st_geover,
-		LocationID: geover.LocationID,
+		Latitude:     geover.Latitude,
+		Longitude:    geover.Longitude,
+		Status:       st_geover,
+		LocationName: geover.LocationName,
 	}
 }
 
