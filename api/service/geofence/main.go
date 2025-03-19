@@ -138,7 +138,7 @@ func run(ctx context.Context, log *logger.Logger) error {
 		DB:    db,
 	}
 
-	webAPI := mux.WebAPI(cfgMux)
+	webAPI := mux.WebAPI(cfgMux, mux.WithCORS(cfg.Web.CORSAllowedOrigins))
 
 	api := http.Server{
 		Addr:         cfg.Web.APIHost,

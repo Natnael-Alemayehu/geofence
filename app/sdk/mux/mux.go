@@ -16,6 +16,18 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// Options represent optional parameters.
+type Options struct {
+	corsOrigin []string
+}
+
+// WithCORS provides configuration options for CORS.
+func WithCORS(origins []string) func(opts *Options) {
+	return func(opts *Options) {
+		opts.corsOrigin = origins
+	}
+}
+
 // Config contains all the mandatory systems required by handlers.
 type Config struct {
 	Build string
@@ -24,7 +36,7 @@ type Config struct {
 }
 
 // WebAPI constructs a http.Handler with all application routes bound.
-func WebAPI(cfg Config) http.Handler {
+func WebAPI(cfg Config, options ...func(opts *Options)) http.Handler {
 	logger := func(ctx context.Context, msg string, args ...any) {
 		cfg.Log.Info(ctx, msg, args...)
 	}
@@ -35,6 +47,15 @@ func WebAPI(cfg Config) http.Handler {
 		mid.Errors(cfg.Log),
 		mid.Panics(),
 	)
+
+	var opts Options
+	for _, option := range options {
+		option(&opts)
+	}
+
+	if len(opts.corsOrigin) > 0 {
+		app.EnableCORS(opts.corsOrigin)
+	}
 
 	geofenceBus := geofencebus.NewBusiness(cfg.Log, geolocationdb.NewStore(cfg.Log, cfg.DB))
 
