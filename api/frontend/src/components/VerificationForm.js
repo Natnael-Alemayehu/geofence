@@ -1,5 +1,5 @@
-// src/components/VerificationForm.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Papa from 'papaparse';
 import { verifyLocation } from '../services/api';
 
 const VerificationForm = () => {
@@ -8,10 +8,24 @@ const VerificationForm = () => {
     latitude: '',
     longitude: ''
   });
-
+  const [dropdownOptions, setDropdownOptions] = useState([]);
   const [verificationResult, setVerificationResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch('/drpdwn.csv')
+      .then(res => res.text())
+      .then(data => {
+        Papa.parse(data, {
+          header: true,
+          complete: (results) => {
+            setDropdownOptions(results.data);
+          }
+        });
+      })
+      .catch(err => console.error(err));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,15 +77,20 @@ const VerificationForm = () => {
         <div className="card">
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="block mb-2 text-sm font-medium">Location ID</label>
-              <input
-                type="text"
+              <label className="block mb-2 text-sm font-medium">Location</label>
+              <select
                 name="location_id"
                 value={formData.location_id}
                 onChange={handleChange}
                 className="input-field w-full"
-                placeholder="Enter location ID"
-              />
+              >
+                <option value="">Select location</option>
+                {dropdownOptions.map((option, index) => (
+                  <option key={index} value={option.id}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
             </div>
             
             <div className="mb-4">
